@@ -3,6 +3,7 @@ import speech_recognition as srec
 from gtts import gTTS
 import pygame
 import io
+import subprocess
 
 app = Flask(__name__)
 
@@ -46,8 +47,21 @@ def voice():
     Layanan = perintah()
     response = {"text": Layanan}
     if Layanan:
-        ngomong(Layanan)
-        response["status"] = "Diterima"
+        if "buka chrome" in Layanan.lower():
+            subprocess.Popen(['/usr/bin/google-chrome'])  
+            ngomong("buka Chrome")
+            response["status"] = "Membuka Chrome"
+        elif "buka spotify" in Layanan.lower():
+            subprocess.Popen(['/snap/bin/spotify'])  
+            ngomong("Buka Spotify")
+            response["status"] = "Membuka Spotify" 
+        elif "buka discord" in Layanan.lower():
+            subprocess.Popen(['/snap/bin/discord'])
+            ngomong("Buka Discord")
+            response["status"] = "Membuka Discord"
+        else:
+            ngomong(Layanan)
+            response["status"] = "Diterima"
     else:
         response["status"] = "Gagal mengenali suara"
     return jsonify(response)
