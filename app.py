@@ -4,8 +4,12 @@ from gtts import gTTS
 import pygame
 import io
 import subprocess
+import webbrowser
+from datetime import datetime
 
 app = Flask(__name__)
+
+MASTER = "Yasir"
 
 def perintah():
     mendengar = srec.Recognizer()
@@ -21,7 +25,7 @@ def perintah():
             dengar = ""
         return dengar
 
-def ngomong(teks):
+def speak(teks):
     bahasa = 'id'
     suara = gTTS(text=teks, lang=bahasa, slow=False)
 
@@ -38,8 +42,24 @@ def ngomong(teks):
     while pygame.mixer.music.get_busy():
         continue
 
+def salam():
+    sekarang = datetime.now()
+    jam = sekarang.hour
+    
+    if 5 <= jam < 12:
+        return f"Selamat Pagi, {MASTER}"
+    elif 12 <= jam < 18:
+        return f"Selamat Siang, {MASTER}"
+    elif 18 <= jam < 21:
+        return f"Selamat Sore, {MASTER}"
+    else:
+        return f"Selamat Malam, {MASTER}"
+
 @app.route('/')
 def index():
+    sapaan = salam()
+    print(f"Mengucapkan: {sapaan}")
+    speak(sapaan)
     return render_template('index.html')
 
 @app.route('/voice', methods=['POST'])
@@ -49,18 +69,18 @@ def voice():
     if Layanan:
         if "buka chrome" in Layanan.lower():
             subprocess.Popen(['/usr/bin/google-chrome'])  
-            ngomong("buka Chrome")
+            speak("buka Chrome")
             response["status"] = "Membuka Chrome"
         elif "buka spotify" in Layanan.lower():
             subprocess.Popen(['/snap/bin/spotify'])  
-            ngomong("Buka Spotify")
+            speak("Buka Spotify")
             response["status"] = "Membuka Spotify" 
-        elif "buka discord" in Layanan.lower():
-            subprocess.Popen(['/snap/bin/discord'])
-            ngomong("Buka Discord")
-            response["status"] = "Membuka Discord"
+        elif "buka youtube" in Layanan.lower():
+            webbrowser.open('https://www.youtube.com')
+            speak("Buka Youtube")
+            response["status"] = "Membuka Youtube"
         else:
-            ngomong(Layanan)
+            speak(Layanan)
             response["status"] = "Diterima"
     else:
         response["status"] = "Gagal mengenali suara"

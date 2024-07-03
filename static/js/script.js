@@ -1,19 +1,28 @@
-document.getElementById('start').addEventListener('click', () => {
-    const statusElement = document.getElementById('status');
-    const resultElement = document.getElementById('result');
+const startButton = document.getElementById('start');
+const statusElement = document.getElementById('status');
+const resultElement = document.getElementById('result');
+const animationElement = document.getElementById('animation');
 
-    statusElement.textContent = 'Mendengarkan...';
+startButton.addEventListener('click', () => {
+    animationElement.classList.remove('hidden');
+    statusElement.textContent = 'Listening...';
+    resultElement.textContent = '';
 
     fetch('/voice', {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Response JSON:', data); 
         statusElement.textContent = data.status;
         resultElement.textContent = data.text;
+        animationElement.classList.add('hidden');
     })
     .catch(error => {
         console.error('Error:', error);
-        statusElement.textContent = 'Terjadi kesalahan';
+        animationElement.classList.add('hidden');
     });
 });

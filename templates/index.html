@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VA Yaseru</title>
+    <title>JAWIR AI</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>VIRTUAL ASSISTANCE JAWIR AI</h1>
+        <h1>Virtual Assistance JAWIR</h1>
         <button id="start">Start Listening</button>
-        <p id="status" class="status"></p>
-        <p id="result" class="result"></p>
+        <div id="animation" class="animation hidden"></div>
+        <p id="status"></p>
+        <p id="result"></p>
     </div>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
