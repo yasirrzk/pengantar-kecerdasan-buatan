@@ -6,10 +6,14 @@ import io
 import subprocess
 import webbrowser
 from datetime import datetime
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
 
 app = Flask(__name__)
 
 MASTER = "Yasir"
+driver = None  
 
 def perintah():
     mendengar = srec.Recognizer()
@@ -29,12 +33,10 @@ def speak(teks):
     bahasa = 'id'
     suara = gTTS(text=teks, lang=bahasa, slow=False)
 
-    # Menyimpan suara ke dalam buffer
     mp3_fp = io.BytesIO()
     suara.write_to_fp(mp3_fp)
     mp3_fp.seek(0)
 
-    # pygame untuk memutar audio
     pygame.mixer.init()
     pygame.mixer.music.load(mp3_fp, 'mp3')
     pygame.mixer.music.play()
@@ -48,9 +50,9 @@ def salam():
     
     if 5 <= jam < 12:
         return f"Selamat Pagi, {MASTER}"
-    elif 12 <= jam < 18:
+    elif 12 <= jam < 15:
         return f"Selamat Siang, {MASTER}"
-    elif 18 <= jam < 21:
+    elif 15 <= jam < 18:
         return f"Selamat Sore, {MASTER}"
     else:
         return f"Selamat Malam, {MASTER}"
@@ -64,12 +66,13 @@ def index():
 
 @app.route('/voice', methods=['POST'])
 def voice():
+    global driver
     Layanan = perintah()
     response = {"text": Layanan}
     if Layanan:
         if "buka chrome" in Layanan.lower():
             subprocess.Popen(['/usr/bin/google-chrome'])  
-            speak("buka Chrome")
+            speak("Buka Chrome")
             response["status"] = "Membuka Chrome"
         elif "buka spotify" in Layanan.lower():
             subprocess.Popen(['/snap/bin/spotify'])  
@@ -79,9 +82,22 @@ def voice():
             webbrowser.open('https://www.youtube.com')
             speak("Buka Youtube")
             response["status"] = "Membuka Youtube"
-        else:
-            speak(Layanan)
-            response["status"] = "Diterima"
+        elif "login sinau" in Layanan.lower():
+            if driver is None:
+                driver = webdriver.Chrome()
+            driver.get('https://syncnau.poltektegal.ac.id/login')
+
+            username_field = driver.find_element(By.NAME, 'username')
+            password_field = driver.find_element(By.NAME, 'password')
+            login_button = driver.find_element(By.XPATH, '//button[@type="submit"]')
+
+            username_field.send_keys('22090068') 
+            password_field.send_keys('yasirrizkii4') 
+
+            login_button.click()
+
+            speak("Login sinau")
+            response["status"] = "Membuka Syncnau dan login"
     else:
         response["status"] = "Gagal mengenali suara"
     return jsonify(response)
