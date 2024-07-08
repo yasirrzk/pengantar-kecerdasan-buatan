@@ -91,8 +91,8 @@ def voice():
             password_field = driver.find_element(By.NAME, 'password')
             login_button = driver.find_element(By.XPATH, '//button[@type="submit"]')
 
-            username_field.send_keys('22090068') 
-            password_field.send_keys('yasirrizkii4') 
+            username_field.send_keys('') 
+            password_field.send_keys('') 
 
             login_button.click()
 
